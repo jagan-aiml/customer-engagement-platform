@@ -1,0 +1,75 @@
+# Render deployment configuration for RealtyEngage Backend
+
+services:
+  # Web service for the Node.js/Express API
+  - type: web
+    name: realtyengage-api
+    env: node
+    region: oregon # or singapore, frankfurt, ohio
+    plan: free # or starter, standard, pro
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/health
+    
+    envVars:
+      - key: NODE_ENV
+        value: production
+      
+      - key: PORT
+        value: 5000
+      
+      - key: MONGODB_URI
+        sync: false # Set in Render dashboard for security
+      
+      - key: JWT_SECRET
+        generateValue: true # Auto-generate secure random value
+      
+      - key: JWT_REFRESH_SECRET
+        generateValue: true
+      
+      - key: FRONTEND_URL
+        value: https://realtyengage.netlify.app
+      
+      - key: ALLOW_ADMIN_REGISTRATION
+        value: false
+      
+      # Optional services (configure in dashboard)
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+      
+      - key: SENDGRID_API_KEY
+        sync: false
+      
+      - key: RAZORPAY_KEY_ID
+        sync: false
+      
+      - key: RAZORPAY_KEY_SECRET
+        sync: false
+      
+      - key: GOOGLE_MAPS_API_KEY
+        sync: false
+
+# Optional: Background workers
+# - type: worker
+#   name: realtyengage-worker
+#   env: node
+#   region: oregon
+#   plan: free
+#   buildCommand: npm install
+#   startCommand: node workers/emailWorker.js
+
+# Optional: Cron jobs
+# - type: cron
+#   name: realtyengage-cleanup
+#   env: node
+#   region: oregon
+#   plan: free
+#   buildCommand: npm install
+#   startCommand: node scripts/cleanup.js
+#   schedule: "0 2 * * *" # Run at 2 AM daily
